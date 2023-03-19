@@ -5,11 +5,13 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,6 +19,7 @@ import com.example.composetest.model.User
 import com.example.composetest.ui.theme.ComposeTestTheme
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -30,6 +33,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.example.composetest.model.UserResponse
+import com.example.composetest.ui.theme.Purple40
+import com.example.composetest.ui.theme.Purple80
 import com.example.composetest.util.previewparameterprovider.UsersPreviewParameterProvider
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -100,22 +105,34 @@ class MainActivity2 : ComponentActivity() {
             // But this is not the case for PagingSource.
             Text(text = "Network Error, click here to try again",
                 color = Color.Red,
-                modifier = Modifier.constrainAs(tvRetry) {
-                    start.linkTo(parent.start, margin = 8.dp)
-                    end.linkTo(parent.end, margin = 8.dp)
-                    bottom.linkTo(button.top, margin = 8.dp)
-                    width = Dimension.fillToConstraints
-                    visibility = if (isNetworkError) Visibility.Visible else Visibility.Gone
-                }.padding(16.0.dp).clickable { list.retry() }
+                modifier = Modifier
+                    .constrainAs(tvRetry) {
+                        start.linkTo(parent.start, margin = 8.dp)
+                        end.linkTo(parent.end, margin = 8.dp)
+                        bottom.linkTo(button.top, margin = 8.dp)
+                        width = Dimension.fillToConstraints
+                        visibility = if (isNetworkError) Visibility.Visible else Visibility.Gone
+                    }
+                    .padding(16.0.dp)
+                    .clickable { list.retry() }
             )
 
-            Button(onClick = onActionClick, modifier = Modifier.constrainAs(button) {
+            var buttonClicked by remember { mutableStateOf(false) }
+             val color = animateColorAsState ((if (buttonClicked) Purple40 else Purple80),
+                 animationSpec = tween(
+                     durationMillis = 2000,
+                     delayMillis = 40,
+                     easing = LinearOutSlowInEasing
+                 ))
+
+            Button(onClick = {
+                buttonClicked = !buttonClicked
+            }, modifier = Modifier.constrainAs(button) {
                 start.linkTo(parent.start, margin = 8.dp)
                 end.linkTo(parent.end, margin = 8.dp)
                 bottom.linkTo(parent.bottom, margin = 8.dp)
                 width = Dimension.fillToConstraints
-            }) {
-
+            }, colors = ButtonDefaults.buttonColors(containerColor = color.value)) {
                 Text(text = "-- --")
             }
         }
