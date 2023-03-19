@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.ComposeTest" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.ComposeTest.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.ComposeTest.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.ComposeTest.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>
